@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" packages="com.migu.component.ice.admin" monitorInterval="30">
+    <Properties>
+        <Property name="filePath">out.log</Property>
+        <Property name="maxSeq">999</Property>
+        <Property name="rollingSize">512MB</Property>
+        <Property name="error_file_path">logs</Property>
+    </Properties>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） -->
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%-5p]  %C {%F:%L} - %m%n"/>
+        </Console>
+        <!--clean old log file when boot up-->
+        <File name="logFile" fileName="${filePath}">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%-5p]  %c - %m%n"/>
+        </File>
+        <!--append to log file-->
+        <RollingFile name="cp1" fileName="${error_file_path}/read/info.log"
+                     filePattern="${error_file_path}/read/$${date:yyyyMM}/read-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <pattern>
+                    <![CDATA[
+						%-5p - %d{yyyy-MM-dd HH:mm:ss.SSS}; %m%n
+					]]>
+                </pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="${rollingSize}"/>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+            <DefaultRolloverStrategy max="${maxSeq}"/>
+        </RollingFile>
+        <RollingFile name="cp2" fileName="${error_file_path}/game/info.log"
+                     filePattern="${error_file_path}/game/$${date:yyyyMM}/game-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout>
+                <pattern>
+                    <![CDATA[
+						%-5p - %d{yyyy-MM-dd HH:mm:ss.SSS}; %m%n
+					]]>
+                </pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="${rollingSize}"/>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+            <DefaultRolloverStrategy max="${maxSeq}"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <!--ALL < DEBUG < INFO < WARN < ERROR < FATAL < OFF-->
+        <asyncRoot level="debug">
+            <AppenderRef ref="console"/>
+        </asyncRoot>
+        <asyncLogger name="org.springframework" level="info"/>
+        <asyncLogger name="com.migu.component" level="debug">
+            <AppenderRef ref="logFile"/>
+        </asyncLogger>
+        <asyncLogger name="cp1" level="FATAL">
+            <AppenderRef ref="read"/>
+        </asyncLogger>
+        <asyncLogger name="cp2" level="FATAL">
+            <AppenderRef ref="game"/>
+        </asyncLogger>
+    </Loggers>
+</Configuration>

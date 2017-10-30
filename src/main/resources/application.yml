@@ -1,0 +1,22 @@
+################### http server ###################
+server:
+  port: 8080
+
+###################  spring ###################
+spring:
+#  mvc:
+#    static-path-pattern: /static/**
+#    view:
+#      prefix: /WEB-INF/view
+  http:
+    converters:
+      preferred-json-mapper: fastjson
+
+##########################################################
+iceAdmin:
+    mapEndpoints:
+       cp1 : tcp -h 10.25.212.43 -p 4061
+       cp2 : tcp -h 10.25.212.45 -p 4061
+    monitorCron : 0/10 0/1 * * * ?
+
+
